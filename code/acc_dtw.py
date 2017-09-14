@@ -64,9 +64,9 @@ def dtw(x, y):
     C = D1.copy()
     accumulate_distances( D0, D1 )
     if len(x)==1:
-        path = np.zeros(len(y)), range(len(y))
+        path = np.zeros(len(y)), list(range(len(y)))
     elif len(y) == 1:
-        path = range(len(x)), np.zeros(len(x))
+        path = list(range(len(x))), np.zeros(len(x))
     else:
         path = _traceback(D0)
     return D1[-1, -1] / sum(D1.shape), C, D1, path

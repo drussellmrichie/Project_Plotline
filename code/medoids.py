@@ -23,9 +23,9 @@ $ python medoids.py 3_stability
 # AnnaVM added some of the comments and most of the docstring
 #!/usr/bin/env python
 
-import cPickle as pickle
+import pickle as pickle
 import matplotlib.pyplot as plt
-from plotline_utilities import progression_bar
+from .plotline_utilities import progression_bar
 from collections import defaultdict
 from seaborn import heatmap
 import numpy as np
@@ -133,7 +133,7 @@ def make_distance_array(distance_dictionary):
     np.array (square array of size num movies) as the matrix of
     pairwise distances
     '''
-    movies = distance_dictionary.keys()
+    movies = list(distance_dictionary.keys())
     list_distances = []
     for movie1 in movies:
         movie_distances = []
@@ -165,12 +165,12 @@ def clusters_k(k, distances, plot_option=False):
     list_values = []
     mini = 10e9
     index = 0
-    for _ in xrange(100):
+    for _ in range(100):
         #the clustering runs 100 times, we keep the best one (in an attempt to get the )
         clusters, curr_medoids = cluster(distances, k=k)
         curr_medoids, list_average_costs, avg_cost = cost(curr_medoids, clusters, distances)
         if plot_option:
-            plt.bar(xrange(len(list_average_costs)), list_average_costs, label=avg_cost)
+            plt.bar(range(len(list_average_costs)), list_average_costs, label=avg_cost)
             plt.legend()
             plt.title(index)
             plt.show()
@@ -181,7 +181,7 @@ def clusters_k(k, distances, plot_option=False):
             medoids = curr_medoids
     return mini, medoids
 
-def defining_k(distances, range_k=range(2,15), plot_option=True):
+def defining_k(distances, range_k=list(range(2,15)), plot_option=True):
     '''
     parameters:
     -----------
@@ -198,7 +198,7 @@ def defining_k(distances, range_k=range(2,15), plot_option=True):
     list_val = [] #will receive the cost of the clustering
     list_medoids = [] #will receive the medoids
     for k in range_k:
-        print 'executing for ' + str(k) + ' clusters'
+        print('executing for ' + str(k) + ' clusters')
         mini, curr_medoids = clusters_k(k,distances)
         list_val.append(mini)
         list_medoids.append(curr_medoids)
@@ -274,11 +274,11 @@ def see_histograms(list_distances):
 
 def see_heatmap(d_intracluster_distances, dict_clusters_mask):
     #create a symetrical pandas dataframe
-    df = pd.DataFrame(d_intracluster_distances, columns=dict_clusters_mask.keys())
+    df = pd.DataFrame(d_intracluster_distances, columns=list(dict_clusters_mask.keys()))
     #rename column to have right label in heatmap
     d_column = {}
     n_column = 0
-    for key in dict_clusters_mask.keys():
+    for key in list(dict_clusters_mask.keys()):
         d_column[key] = n_column
         n_column += 1
     df.rename(columns=d_column, inplace=True)
@@ -290,10 +290,10 @@ def visualize_clusters(dict_clusters_mask, dict_clusters_movie_names,distances):
     #distances in cluster
     list_distances = []
     d_intracluster_distances = {}
-    for cluster1, bool_array in dict_clusters_mask.items():
+    for cluster1, bool_array in list(dict_clusters_mask.items()):
         list_distances.append(distances[bool_array][:,cluster1])
         list_for_dict = []
-        for cluster2, bool_array2 in dict_clusters_mask.items():
+        for cluster2, bool_array2 in list(dict_clusters_mask.items()):
             pp = distances[bool_array][:, bool_array2]
             list_for_dict.append(np.median(pp))
         d_intracluster_distances[cluster1] = list_for_dict
@@ -323,13 +323,13 @@ def investigate_stability(movies, distances, times_run, k):
     list_runs = [] #will get all the movies as filename in the clusters
                    # for instance k = 3:
                    # [[set1, set2, set3], [set1, set2, set3]]
-    print 'Progression of clustering'
-    for i in xrange(times_run):
+    print('Progression of clustering')
+    for i in range(times_run):
         progression_bar(i, times_run-1, Nbars=times_run-1, char='-')
         #for a run let's get the clusters
         m1,m2,c,d1,d2 = chosen_num_cluster(movies, k, distances)
         list_sets = [] # will receive the sets: [set1, set2, set3]
-        for key in d2.keys():
+        for key in list(d2.keys()):
             s1 = set(d2[key])
             s1.add(key)
             list_sets.append(s1)
@@ -349,7 +349,7 @@ def investigate_stability(movies, distances, times_run, k):
 
     #finally, intersect the sets
     d_intersection = {}
-    for medoid in d.keys():
+    for medoid in list(d.keys()):
         list_sets = d[medoid]
         for i in range(len(list_sets)):
             if i == 0:
@@ -361,17 +361,17 @@ def investigate_stability(movies, distances, times_run, k):
     #print the stability: how many movies are always together in the same cluster
     num_movies = 0
     total_num_movies = len(movies)
-    print '\n'
-    print '*'*50
-    print '**' + ' '*12 + 'stability of clusters' + ' '*13 +'**'
-    print '*'*50
-    for intersect_set in d_intersection.values():
+    print('\n')
+    print('*'*50)
+    print('**' + ' '*12 + 'stability of clusters' + ' '*13 +'**')
+    print('*'*50)
+    for intersect_set in list(d_intersection.values()):
         num_movies += len(intersect_set)
-        print 'number of movies always in the cluster: '+ str(len(intersect_set))
-    print '-'*50
-    print 'movies that are always in the same cluster: '
-    print 'in numbers: '+ str(num_movies) + ' | in percent: ' + str(num_movies*1./total_num_movies * 100) +'%'
-    print '*'*50
+        print('number of movies always in the cluster: '+ str(len(intersect_set)))
+    print('-'*50)
+    print('movies that are always in the same cluster: ')
+    print('in numbers: '+ str(num_movies) + ' | in percent: ' + str(num_movies*1./total_num_movies * 100) +'%')
+    print('*'*50)
 
     return d_intersection
 
@@ -383,7 +383,7 @@ if __name__ == '__main__':
     movies, distances = make_distance_array(distance_dictionary)
 
     if sys.argv[1] == 'pick_k':
-        list_val, list_medoids = defining_k(distances, range_k=range(2,15), plot_option=True)
+        list_val, list_medoids = defining_k(distances, range_k=list(range(2,15)), plot_option=True)
         plt.show()
 
     elif sys.argv[1][:-1] == 'k=':

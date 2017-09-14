@@ -86,5 +86,5 @@ def prepare_dictionary(filename):
     '''
     plotline = LoadPlotLine(filename)
     plotline.load_emotions()
-    plotline.make_emotion_dictionary(list_emotions=range(10))
+    plotline.make_emotion_dictionary(list_emotions=list(range(10)))
     return plotline.emotion_dictionary_smooth

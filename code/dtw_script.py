@@ -30,15 +30,15 @@ in ../data folder: the dictionary of distances is pickled as 'distances.pkl'
                          value --> distance
 '''
 
-import acc_dtw
+from . import acc_dtw
 import dtw #original package
 import os
 from collections import defaultdict
 import numpy as np
-import cPickle as pickle
+import pickle as pickle
 
-from load_plotline import LoadPlotLine
-from plotline_utilities import progression_bar
+from .load_plotline import LoadPlotLine
+from .plotline_utilities import progression_bar
 
 def prepare_smooth_array(filename):
     '''
@@ -51,7 +51,7 @@ def prepare_smooth_array(filename):
     '''
     plotline = LoadPlotLine(filename)
     plotline.load_emotions()
-    plotline.make_emotion_dictionary(list_emotions=range(10))
+    plotline.make_emotion_dictionary(list_emotions=list(range(10)))
     return plotline.smoothed_array_emotions
 
 
@@ -106,7 +106,7 @@ def dtw_dictionary():
     legit_files = [filename[:-4] for filename in files if filename[-3:]=='npy']
     Ntot = len(legit_files)
     #prepare all arrays
-    print "Preparing all the files"
+    print("Preparing all the files")
     list_smooth_arrays = []
     index = 0
     for filename in legit_files:
@@ -117,14 +117,14 @@ def dtw_dictionary():
 
 
     #looking at the similarity in the plots
-    print "\n"
-    print "Computing all the distances"
+    print("\n")
+    print("Computing all the distances")
     full_dictionary = defaultdict(dict)
     index = 0
-    for index1 in xrange(len(legit_files)):
+    for index1 in range(len(legit_files)):
         filename1 = legit_files[index1]
         arr1 = list_smooth_arrays[index1]
-        for index2 in xrange(index1+1,len(legit_files)):
+        for index2 in range(index1+1,len(legit_files)):
             filename2 = legit_files[index2]
             arr2 = list_smooth_arrays[index2]
             min_distance = get_distance(arr1, arr2)
@@ -138,4 +138,4 @@ if __name__ == "__main__":
     d = dtw_dictionary()
     with open('../data/distances.pkl', 'w') as f:
         pickle.dump(d, f)
-    print "\n"
+    print("\n")

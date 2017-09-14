@@ -17,7 +17,7 @@ import ipywidgets as widgets #new version of IPython.htlm
 from IPython.display import display
 from ipywidgets import fixed
 
-from plotline_utilities import progression_bar, smoothing,\
+from .plotline_utilities import progression_bar, smoothing,\
                                make_title_dictionary
 
 class LoadPlotLine(object):
@@ -50,7 +50,7 @@ class LoadPlotLine(object):
         path_file = self.path + self.filename + '.npy'
         self.array_emotions = np.load(path_file)
 
-    def make_emotion_dictionary(self, list_emotions=range(5)+range(7,10)):
+    def make_emotion_dictionary(self, list_emotions=list(range(5))+list(range(7,10))):
         '''
         must be run after: load_emotions
         parameters:
@@ -81,7 +81,7 @@ class LoadPlotLine(object):
         #the new array is structured like array_emotions
 
 
-    def global_overview(self, list_emotions=range(5)+range(7,10),
+    def global_overview(self, list_emotions=list(range(5))+list(range(7,10)),
                         percent_min=0, percent_max=1,
                         bar_color='blue',
                         show_option=True):
@@ -111,7 +111,7 @@ class LoadPlotLine(object):
         #makes self.emotion_dictionary_raw
         #makes self.emotion_dictionary_smooth
 
-        for (emotion,index), (x,y) in self.emotion_dictionary_smooth.iteritems():
+        for (emotion,index), (x,y) in self.emotion_dictionary_smooth.items():
             x_min = int(percent_min * len(y))
             x_max = int(percent_max * len(y))
             new_y = y[x_min:x_max]
@@ -119,10 +119,10 @@ class LoadPlotLine(object):
             total_all_emotions += sum(new_y)
 
         #sort the list to find strongest emotions
-        list_total.sort(key=lambda (x,y):y)
+        list_total.sort(key=lambda x_y:x_y[1])
         ordered_emotions = [tup[0] for tup in list_total]
         percentages = [int(tup[1]/total_all_emotions*100) for tup in list_total]
-        positions = np.array(range(len(ordered_emotions)))
+        positions = np.array(list(range(len(ordered_emotions))))
         plt.barh(positions, percentages,
                  color=bar_color, height=0.6, alpha=0.5)
         plt.yticks(positions+0.3, ordered_emotions)
@@ -132,7 +132,7 @@ class LoadPlotLine(object):
             plt.show()
 
 
-    def visualisation_for_emotions(self, list_emotions=range(5)+range(7,10),
+    def visualisation_for_emotions(self, list_emotions=list(range(5))+list(range(7,10)),
                                    raw_data=True,
                                    title_option=True,
                                    save_png=False):
@@ -156,7 +156,7 @@ class LoadPlotLine(object):
         plt.subplots_adjust(right=0.73)
         self.make_emotion_dictionary(list_emotions)
         valid_indices = set(list_emotions)
-        for (emotion,index), (x,y) in self.emotion_dictionary_smooth.iteritems():
+        for (emotion,index), (x,y) in self.emotion_dictionary_smooth.items():
             if index in valid_indices:
                 if not raw_data:
                     x_max = np.max(x)
@@ -270,7 +270,7 @@ class ExploreData(object):
 
         #selection of the relevant emotions
         list_integers = []
-        for i in xrange(len(list_emotions)):
+        for i in range(len(list_emotions)):
             if list_emotions[i]:
                 list_integers.append(i)
 
@@ -349,7 +349,7 @@ class ExploreData(object):
 ################
 if __name__ == '__main__':
     # Saving pngs
-    user_input = raw_input("Do you want to save plots as png (y/n) > ")
+    user_input = input("Do you want to save plots as png (y/n) > ")
     save_png = (user_input == 'y')
 
     # Create the directory for pngs
@@ -362,7 +362,7 @@ if __name__ == '__main__':
     index = 1
     legit_files = [filename[:-4] for filename in files if filename[-3:]=='npy']
     Ntot = len(legit_files)
-    chosen_emotions = range(5)+range(7,10)
+    chosen_emotions = list(range(5))+list(range(7,10))
     #all emotions except positive and negative
     for filename in legit_files:
         plotline = LoadPlotLine(filename)

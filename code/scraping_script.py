@@ -33,7 +33,7 @@ import os
 import sys
 import codecs
 from bs4 import BeautifulSoup
-from plotline_utilities import progression_bar
+from .plotline_utilities import progression_bar
 from selenium import webdriver
 
 def get_all_movies():
@@ -114,7 +114,7 @@ def handle_movie (movie, browser):
 
     # Interrogate the page with all the movie information (ratings, writer,
     # genre, link to script)
-    full_html_link = u'http://www.imsdb.com' + link_to_movie_page
+    full_html_link = 'http://www.imsdb.com' + link_to_movie_page
     response_script = requests.get(full_html_link)
     soup = BeautifulSoup(response_script.text, 'html.parser')
 
@@ -146,7 +146,7 @@ def handle_movie (movie, browser):
     else:
 
         # Parse the webpage which contains the script text
-        full_script_url =  u'http://www.imsdb.com' + script
+        full_script_url =  'http://www.imsdb.com' + script
         browser.get(full_script_url)
         page_text = browser.page_source
         soup = BeautifulSoup(page_text, 'html.parser')
@@ -182,17 +182,17 @@ if __name__ == '__main__':
     # Create data/scraping/texts files
     if not os.path.exists('../data'):
         os.mkdir('../data')
-        print 'making ../data folder'
+        print('making ../data folder')
     if not os.path.exists('../data/scraping'):
         os.mkdir('../data/scraping')
-        print 'making ../data/scraping folder'
+        print('making ../data/scraping folder')
     if not os.path.exists('../data/scraping/texts'):
         os.mkdir('../data/scraping/texts')
-        print 'making ../data/scraping/texts folder'
+        print('making ../data/scraping/texts folder')
 
     # List all the available movies, and the corresponding URL links
     movies = get_all_movies()
-    print check_movie_info(movies)
+    print(check_movie_info(movies))
 
     # Write all the scripts (in texts folder) and the summary of the movies
     # in .csv format (in scraping folder)

@@ -35,7 +35,7 @@ in ../data/emotions/arrays folder: all of the emotion counts available in .npy
 import pandas as pd
 import numpy as np
 import os
-from plotline_utilities import progression_bar
+from .plotline_utilities import progression_bar
 
 from nltk.stem import WordNetLemmatizer
 
@@ -108,7 +108,7 @@ def window_blocks(text, size_block=100):
     the text as a list of windows (window = list of words of length size_block)
     '''
     list_windows = []
-    for i in xrange(0,len(text)-size_block,size_block):
+    for i in range(0,len(text)-size_block,size_block):
         window = text[i:i+size_block]
         list_windows.append(window)
     return list_windows
@@ -173,14 +173,14 @@ def get_emotions(filename, path_to_file, emotion_dict, vocabulary,
     text = get_clean_text([filename], path_to_file)[0]
     list_windows = window_blocks(text, size_block=100)
     if verbose:
-        print 'New file:', len(list_windows)
+        print('New file:', len(list_windows))
     list_emotions=[]
     index = 0
     for window in list_windows:
         index +=1
         list_emotions.append(emotion_counts(window, emotion_dict , vocabulary))
         if index%10==0 and verbose:
-            print index
+            print(index)
     array_emotions = np.array(list_emotions)
     if print_to_file:
         path_to_file = "../data/emotions/arrays/"+filename
@@ -189,7 +189,7 @@ def get_emotions(filename, path_to_file, emotion_dict, vocabulary,
 
 if __name__ == '__main__':
     NRC_emotions_file = '../data/emotions/NRC_emotions.txt'
-    print 'Loading the NRC emotions database, please wait.'
+    print('Loading the NRC emotions database, please wait.')
     emotion_dictionary, vocabulary = \
                             load_dictionary_and_vocabulary(NRC_emotions_file)
 
